@@ -82,9 +82,8 @@ class maze_env():
         return state_, reward, self.game_state
     
     def show(self, t):
-        # cv2.imshow("maze", self.img)
-        # cv2.waitKey(t)
-        pass
+        cv2.imshow("maze", self.img)
+        cv2.waitKey(t)
     
     def reset(self):
         self.pos = self.init_pos.copy()
