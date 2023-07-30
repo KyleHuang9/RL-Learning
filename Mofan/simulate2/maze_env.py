@@ -11,11 +11,12 @@ class maze_env():
         self.game_state = 0  # 0: 正在游戏; 1:地狱 2:天堂
         self.background = self.draw_background()
         self.img = self.background
-        self.pos = pos
+        self.init_pos = pos.copy()
+        self.pos = pos.copy()
         self.update()
     
     def draw_background(self):
-        background = np.zeros((self.size[0] * self.scale, self.size[1] * self.scale, 3))
+        background = np.zeros((self.size[0] * self.scale, self.size[1] * self.scale, 3), dtype=np.uint8)
         
         # 画格线
         for i in range(self.size[0]):
@@ -27,8 +28,8 @@ class maze_env():
             
         # 画地狱
         for hell in self.hell:
-            cv2.rectangle(background, (hell[0] * (self.scale + 1), hell[1] * (self.scale + 1)),
-                          ((hell[0] + 1) * (self.scale - 1), (hell[1] + 1) * (self.scale - 1)), (0, 0, 255), -1)
+            cv2.rectangle(background, (hell[0] * self.scale + 1, hell[1] * self.scale + 1),
+                          ((hell[0] + 1) * self.scale - 1, (hell[1] + 1) * self.scale - 1), (0, 0, 255), -1)
         
         # 画天堂
         for heaven in self.heaven:
@@ -50,15 +51,17 @@ class maze_env():
         elif action == 3:
             self.pos[0] += 1
         
-        # 判断撞墙
-        self.pos[0] = np.array(self.pos[0]).clip(0, self.size[0] - 1).item()
-        self.pos[1] = np.array(self.pos[1]).clip(0, self.size[1] - 1).item()
-        
         # 判断胜负
         if self.pos in self.hell:
             self.game_state = 1
         if self.pos in self.heaven:
             self.game_state = 2
+        if self.pos[0] > self.size[0] or self.pos[1] > self.size[1] or self.pos[0] < 0 or self.pos[1] < 0:
+            self.game_state = 1
+        
+        # 撞墙不动
+        self.pos[0] = np.array(self.pos[0]).clip(0, self.size[0] - 1).item()
+        self.pos[1] = np.array(self.pos[1]).clip(0, self.size[1] - 1).item()
             
         # 计算奖惩
         if self.game_state == 0:
@@ -79,5 +82,11 @@ class maze_env():
         return state_, reward, self.game_state
     
     def show(self, t):
-        cv2.imshow("maze", self.img)
-        cv2.waitKey(t)
+        # cv2.imshow("maze", self.img)
+        # cv2.waitKey(t)
+        pass
+    
+    def reset(self):
+        self.pos = self.init_pos.copy()
+        self.game_state = 0
+        self.update()
