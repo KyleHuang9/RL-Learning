@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 from maze_env import maze_env
 from RL_brain import DQN
 
-EPSILON = 0.9
+EPSILON = 0.8
 GAMMA = 0.9
-ALPHA = 0.1
+LR = 0.01
 LAMBDA = 0.9
 
-EPOCH = 300
+EPOCH = 1000
 START_STEP = 100
 LEARN_RATE = 5
 TRAIN_TIME = 0.02
@@ -19,14 +19,14 @@ TEST_TIME = 0.5
 ACTION = [0, 1, 2, 3]
 INIT_POS = [0, 0]
 SIZE = [4, 4]
-HELL = [[2,1]]
+HELL = [[1,2], [2,1]]
 HEAVEN = [[2, 2]]
 
 def train(env, RL):
     step = 0
     loss_list = []
     for epoch in range(EPOCH):
-        env.reset()
+        # env.reset()
         env.game_state = 0
         total_loss = 0
         loss_cnt = 0
@@ -87,7 +87,7 @@ def test(env, RL):
 
 if __name__ == "__main__":
     env = maze_env(pos=INIT_POS, size=SIZE, hell=HELL, heaven=HEAVEN)
-    RL = DQN(n_actions=len(ACTION), n_features=2, memory_size=2000, epsilon_increase=0.005)
+    RL = DQN(n_actions=len(ACTION), n_features=2, lr=LR, reward_decay=GAMMA, epsilon=EPSILON, memory_size=2000, epsilon_increase=0.001)
     loss_list = train(env, RL)
     env.reset()
     # test(env, RL)

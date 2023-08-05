@@ -69,8 +69,10 @@ class maze_env():
             reward = 0
         elif self.game_state == 1:
             reward = -1
+            self.next_pos = self.pos.copy()
         else:
             reward = 1
+            self.next_pos = self.init_pos.copy()
         
         # 下一位置
         state_ = self.next_pos.copy()
