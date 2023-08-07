@@ -47,9 +47,6 @@ class Policy_gradient():
         probs = self.policy_net(state)
         p = probs.squeeze().detach().numpy()
         action = np.random.choice(np.arange(probs.shape[1]), p=p)
-        
-        # m = Categorical(probs)
-        # action = m.sample().item()
         return action
     
     def store_transition(self, state, action, reward):
